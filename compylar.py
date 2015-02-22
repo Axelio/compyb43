@@ -32,6 +32,8 @@ def __main__():
 
     args = parser.parse_args()
 
+    archivo_deb = 'b43-fwcutter_011-1_i386.deb'
+    compilar_deb = 'dpkg -i %s%s' % (args.ubicacion, archivo_deb)
     agregar_driver = 'b43-fwcutter -w /lib/firmware\
                       %swl_apsta-%s' % (
                         args.ubicacion, args.wl_apsta)
@@ -41,7 +43,8 @@ def __main__():
     agregar_llave = 'apt-key adv --recv-keys --keyserver\
                      pgp.mit.edu 8C720439'
 
-    os.system('su -c "%s; %s"' % (agregar_driver, agregar_llave))
+    os.system('su -c "%s; %s; %s"' % (compilar_deb,
+        agregar_driver, agregar_llave))
 
 
 __main__()
