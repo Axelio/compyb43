@@ -32,24 +32,16 @@ def __main__():
 
     args = parser.parse_args()
 
-    comandos = []
-    comandos.append('b43-fwcutter -w /lib/firmware\
-                     %swl_apsta-%s' % (args.ubicacion, args.wl_apsta))
-
-    comandos.append('b43-fwcutter --unsupported -w /lib/firmware\
+    agregar_driver = 'b43-fwcutter -w /lib/firmware\
+                      %swl_apsta-%s' % (
+                        args.ubicacion, args.wl_apsta)
+    agregar_driver = '%s; b43-fwcutter --unsupported -w /lib/firmware\
                     %sbroadcom-wl-%s/driver/wl_apsta_mimo.o' % (
-                        args.ubicacion, args.b43))
-    comandos.append('b43-fwcutter --unsupported -w /lib/firmware\
-                    %sbroadcom-wl-%s/driver/wl_apsta_mimo.o' % (
-                        args.ubicacion, args.b43))
-    comandos.append('apt-key adv --recv-keys --keyserver\
-                     pgp.mit.edu 8C720439')
+                        agregar_driver, args.ubicacion, args.b43)
+    agregar_llave = 'apt-key adv --recv-keys --keyserver\
+                     pgp.mit.edu 8C720439'
 
-    cmd = ''
-    for comando in comandos:
-        cmd = '%s ; %s' % (cmd, comando)
-
-    os.system('su -c "%s"' % (cmd))
+    os.system('su -c "%s; %s"' % (agregar_driver, agregar_llave))
 
 
 __main__()
