@@ -1,22 +1,28 @@
-#/usr/bin/python2.7
+#!/usr/bin/python2.7
 
 import argparse
 import os
 
-__author__ = "Axel Diaz"
-__credits__ = ["Axel Diaz"]
-__license__ = "GPL"
-__version__ = "1.0.0"
-__maintainer__ = "Axel Diaz"
-__email__ = "diaz.axelio@gmail.com"
-__status__ = "Development"
+from VERSION import version
+
+
+def extant_file(x):
+    """
+    'Type' for argparse - checks that file exists but does not open.
+    """
+    if not os.path.exists(x):
+        raise argparse.ArgumentError("{0} does not exist".format(x))
+    return x
 
 
 def __main__():
     parser = argparse.ArgumentParser()
+    parser.add_argument('-v', '--version', action='version',                    
+                        version="%s" % (version))
     parser.add_argument('-u', '--ubicacion', dest='ubicacion',
-                        action='store_true',
-                        help='Directorio donde estan ubicados los drivers')
+                        required=True,
+                        help='Directorio donde estan ubicados los drivers',
+                        type=extant_file, metavar="ARCHIVO")
     parser.add_argument('-w', '--wl_apsta', dest='wl_apsta',
                         action='store_true', default='3.130.20.0.o',
                         help='Version del wl_apsta. (Por defecto: 3.130.20.0.o)')
@@ -28,7 +34,7 @@ def __main__():
 
     comandos = []
     comandos.append('b43-fwcutter -w /lib/firmware\
-                     %swl_apsta-3.130.20.0.o' % (args.ubicacion, args.wl_apsta))
+                     %swl_apsta-%s' % (args.ubicacion, args.wl_apsta))
 
     comandos.append('b43-fwcutter --unsupported -w /lib/firmware\
                     %sbroadcom-wl-%s/driver/wl_apsta_mimo.o' % (
@@ -43,7 +49,7 @@ def __main__():
     for comando in comandos:
         cmd = '%s ; %s' % (cmd, comando)
 
-    os.system('su -c %s' % (cmd))
+    os.system('su -c "%s"' % (cmd))
 
 
 __main__()
